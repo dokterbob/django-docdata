@@ -3,3 +3,5 @@ dist
 *.pyc
 *.pyo
 .DS\_Store
+test_secrets.py
+

@@ -3,9 +3,15 @@ import sys
 from os.path import dirname, abspath
 from django.conf import settings
 
+try:
+    from test_secrets import MERCHANT_NAME, MERCHANT_PASSWORD
+except ImportError:
+    sys.exit('Must define MERCHANT_NAME and MERCHANT_PASSWORD in test_secrets.py first!')
+
 if not settings.configured:
     settings.configure(
-        
+        DOCDATA_MERCHANT_NAME=MERCHANT_NAME,
+        DOCDATA_MERCHANT_PASSWORD=MERCHANT_PASSWORD,
         DATABASE_ENGINE='sqlite3',
         # HACK: this fixes our threaded runserver remote tests
         DATABASE_NAME='test_docdata.sqlite',

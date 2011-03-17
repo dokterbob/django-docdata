@@ -42,11 +42,11 @@ class PaymentInterface(object):
 
             raise PaymentException('Something went wrong!', error_list)
 
-    def __init__(self, test=False):
+    def __init__(self, debug=False):
         """
         Initialize the interface. If `test` is `True`, the test URL is used.
         """
-        if test:
+        if debug:
             self.url = self.TEST_URL
         else:
             self.url = self.PROD_URL
