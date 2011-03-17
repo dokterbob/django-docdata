@@ -14,3 +14,4 @@ def get_setting(name, default=None):
 MERCHANT_NAME = get_setting('MERCHANT_NAME')
 MERCHANT_PASSWORD = get_setting('MERCHANT_PASSWORD')
 DEBUG = get_setting('DEBUG', True)
+PROFILE = get_setting('PROFILE', 'standard')
