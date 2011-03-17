@@ -103,7 +103,7 @@ class PaymentInterface(object):
 
         # Make sure required arguments are there
         assert 'merchant_name' in kwargs
-        assert 'merchand_password' in kwargs
+        assert 'merchant_password' in kwargs
         assert 'payment_cluster_key' in kwargs
         assert 'report_type' in kwargs
 
@@ -117,28 +117,34 @@ class PaymentInterface(object):
 
         result = urlopen(self.url, urlencode(kwargs))
 
-        if report_type == 'txt_simple':
-            # Interpret the result as a boolean
+        if report_type.startswith('txt_'):
             data = result.read()
 
-            try:
-                return yntobool(data)
-            except:
-                raise PaymentStatusException('Unknown status received',
-                                             report_type=report_type,
-                                             data=data)
-        elif report_type == 'txt_simple2':
-            # Interpret the result as a tuple of booleans
-            data = result.read()
+            # Check for errors
+            if data.startswith('<?xml'):
+                resultdom = minidom.parseString(data)
+                self._check_errors(resultdom)
 
-            try:
-                return (yntobool(data[0]), yntobool(data[1]))
-            except:
-                raise PaymentStatusException('Unknown status received',
-                                             report_type=report_type,
-                                             data=data)
+            if report_type == 'txt_simple':
+                # Interpret the result as a boolean
+                try:
+                    return yntobool(data)
+                except:
+                    raise PaymentStatusException('Unknown status received',
+                                                 report_type=report_type,
+                                                 data=data)
+            elif report_type == 'txt_simple2':
+                # Interpret the result as a tuple of booleans
+                try:
+                    return {'paid': yntobool(data[0]),
+                            'closed': yntobool(data[1])}
+                except:
+                    raise PaymentStatusException('Unknown status received',
+                                                 report_type=report_type,
+                                                 data=data)
         else:
             # We're dealing with XML, interpret as a dictionary
+            assert report_type.startswith('xml_')
 
             # Parse the result XML
             resultdom = minidom.parse(result)
