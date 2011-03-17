@@ -19,7 +19,7 @@ if not settings.configured:
         INSTALLED_APPS=[
             'docdata',
         ],
-        ROOT_URLCONF='',
+        ROOT_URLCONF='docdata.urls',
         DEBUG=False,
         SITE_ID=1,
     )

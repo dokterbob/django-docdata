@@ -18,6 +18,8 @@ class PaymentCluster(models.Model):
     @classmethod
     def get_by_transaction_id(cls, transaction_id):
         """ Get the payment cluster belonging to a specific transaction_id. """
+        assert transaction_id
+
         pk = transaction_id[len(TRANSACTION_ID_PREFIX)+1:]
         return cls.objects.get(pk=pk)
 

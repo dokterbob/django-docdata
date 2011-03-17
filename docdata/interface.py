@@ -1,12 +1,12 @@
 import logging
 logger = logging.getLogger(__name__)
 
-from urllib2 import urlopen
 from urllib import urlencode
 
 from xml.dom import minidom
 
 from docdata.exceptions import PaymentException, PaymentStatusException
+from docdata.utils import urlopen
 
 
 def yntobool(char):

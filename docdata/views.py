@@ -10,13 +10,17 @@ def status_change(request):
     """ Update URL should have ?merchant_transaction_id=<id> set. """
     transaction_id = request.GET.get('merchant_transaction_id')
 
+    if not transaction_id:
+        logger.warning('No transaction id in status change message')
+        raise Http404
+
     logger.debug('Received status change message for transaction_id %s',
                  transaction_id)
 
     try:
         payment_cluster = \
             PaymentCluster.get_by_transaction_id(transaction_id)
-    except PaymentCluster.ObjectDoesNotExist:
+    except PaymentCluster.DoesNotExist:
         logger.warning('Status change for payment cluster with merchant \
                         transaction_id %s not matched', transaction_id)
         raise Http404

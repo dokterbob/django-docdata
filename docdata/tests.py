@@ -106,6 +106,12 @@ class PaymentTest(TestCase):
         pc.create_cluster(**self.default_data)
         self.assertTrue(pc.payment_url())
 
+    def test_status_changed(self):
+        """ Test whether status_change requests are handled well."""
+
+        self.client.get('/status_change/')
+        self.failUnlessEqual(response.status_code, 200)
+
     # def test_paysuccess(self):
     #     """ Test whether succesful payments are processed. """
     #
