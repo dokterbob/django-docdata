@@ -31,6 +31,17 @@ class PaymentInterface(object):
     TEST_URL = 'https://test.tripledeal.com/ps/com.tripledeal.paymentservice.servlets.PaymentService'
     PROD_URL = ''
 
+    def _check_errors(resultdom):
+        """ Check for errors in the DOM, raise PaymentException if found. """
+
+        errors = resultdom.getElementsByTagName('errorlist').item(0)
+        if errors:
+            error_list = []
+            for error in errors.getElementsByTagName('error'):
+                error_list.append(error.getAttribute('msg'))
+
+            raise PaymentException('Something went wrong!', error_list)
+
     def __init__(self, test=False):
         """
         Initialize the interface. If `test` is `True`, the test URL is used.
@@ -75,13 +86,8 @@ class PaymentInterface(object):
         # Parse the result XML
         resultdom = minidom.parse(result)
 
-        errors = resultdom.getElementsByTagName('errorlist').item(0)
-        if errors:
-            error_list = []
-            for error in errors.getElementsByTagName('error'):
-                error_list.append(error.getAttribute('msg'))
-
-            raise PaymentException('Something went wrong!', error_list)
+        # Check for errors
+        self._check_errors(resultdom)
 
         # Get cluster key and id
         id = resultdom.getElementsByTagName('id')[0].getAttribute('value')
@@ -134,10 +140,11 @@ class PaymentInterface(object):
         else:
             # We're dealing with XML, interpret as a dictionary
 
-            # NOTE: we might have to deal with errors here
-
             # Parse the result XML
             resultdom = minidom.parse(result)
+
+            # Check for errors
+            self._check_errors(resultdom)
 
             data = {}
             for e in resultdom.getElementsByTagName('status')[0].childNodes:
