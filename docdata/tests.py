@@ -97,3 +97,45 @@ class PaymentTest(TestCase):
         pc = PaymentCluster(pk=self._get_unique_id())
         pc.cluster_key = 'banana'
         self.assertRaises(PaymentException, pc.update_status)
+
+    def test_showurl(self):
+        """ See whether we can generate a show url. """
+
+        # Create a cluster
+        pc = PaymentCluster(pk=self._get_unique_id())
+        pc.create_cluster(**self.default_data)
+        self.assertTrue(pc.payment_url())
+
+    # def test_paysuccess(self):
+    #     """ Test whether succesful payments are processed. """
+    #
+    #     # Create a cluster
+    #     pc = PaymentCluster(pk=self._get_unique_id())
+    #     pc.create_cluster(**self.default_data)
+    #
+    #     url = pc.show_payment_url()
+    #     print 'Please go to %s and perform a successful payment. Press <ENTER> to proceed.' % url
+    #
+    #     raw_input()
+    #
+    #     pc.update_status()
+    #
+    #     self.assertTrue(pc.paid)
+    #     self.assertTrue(pc.closed)
+    #
+    # def test_payfailure(self):
+    #     """ Test whether succesful payments are processed. """
+    #
+    #     # Create a cluster
+    #     pc = PaymentCluster(pk=self._get_unique_id())
+    #     pc.create_cluster(**self.default_data)
+    #
+    #     url = pc.show_payment_url()
+    #     print 'Please go to %s and cancel the payment. Press <ENTER> to proceed.' % url
+    #
+    #     raw_input()
+    #
+    #     pc.update_status()
+    #
+    #     self.assertFalse(pc.paid)
+    #     self.assertTrue(pc.closed)

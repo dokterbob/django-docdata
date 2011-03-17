@@ -55,6 +55,16 @@ class PaymentCluster(models.Model):
 
         self.save()
 
+    def payment_url(self):
+        """ Return the URL to redirect to for actual payment. """
+
+        assert self.cluster_key
+
+        data = {'merchant_name': MERCHANT_NAME,
+                'payment_cluster_key': self.cluster_key
+        }
+
+        return self.interface.show_payment_cluster_url(**data)
 
     cluster_key = models.CharField(max_length=255)
     cluster_id = models.CharField(max_length=255)
