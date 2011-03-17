@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 from django.db import models
 
 from docdata.interface import PaymentInterface
@@ -8,7 +11,7 @@ from docdata.settings import MERCHANT_NAME, MERCHANT_PASSWORD, DEBUG, \
 class PaymentCluster(models.Model):
     """ Payment cluster model. """
 
-    def _get_transaction_id(self):
+    def get_transaction_id(self):
         """ Generate a transaction id from this cluster's public key. """
 
         assert self.pk, 'No public key available for unique reference'
@@ -21,6 +24,15 @@ class PaymentCluster(models.Model):
         assert transaction_id
 
         pk = transaction_id[len(TRANSACTION_ID_PREFIX)+1:]
+
+        try:
+            pk = int(pk)
+        except ValueError:
+            raise ValueError('Not a valid transaction_id. '+
+                             'Received %s, expected %s-<pk>' % \
+                              (transaction_id, TRANSACTION_ID_PREFIX))
+
+        logger.debug('Looking up transaction with pk %d', pk)
         return cls.objects.get(pk=pk)
 
     def __init__(self, *args, **kwargs):
@@ -35,7 +47,7 @@ class PaymentCluster(models.Model):
 
         data = {'merchant_name': MERCHANT_NAME,
                 'merchant_password': MERCHANT_PASSWORD,
-                'merchant_transaction_id': self._get_transaction_id(),
+                'merchant_transaction_id': self.get_transaction_id(),
                 'profile': PROFILE,}
 
         data.update(kwargs)
@@ -44,6 +56,8 @@ class PaymentCluster(models.Model):
 
         self.cluster_key = result['payment_cluster_key']
         self.cluster_id = result['payment_cluster_id']
+
+        self.save()
 
     def update_status(self):
         """ Go out and update the payment status, and save to database. """
@@ -59,6 +73,8 @@ class PaymentCluster(models.Model):
         self.paid = result['paid']
         self.closed = result['closed']
 
+        # TODO: Emit signal here, containing PaymentCluster object
+
         self.save()
 
     def payment_url(self):
@@ -72,8 +88,25 @@ class PaymentCluster(models.Model):
 
         return self.interface.show_payment_cluster_url(**data)
 
+    @classmethod
+    def clear(self, days=1):
+        """ Remove closed payment clusters modified at least `days` ago. """
+        from datetime import datetime, timedelta
+
+        # Too bad these little statistics *might* hurt performance
+        old_count = self.objects.all().count()
+
+        oldest = datetime.now() - timedelta(days=days)
+        self.objects.filter(closed=True, modified__lt=oldest).delete()
+
+        logging.info('Deleted %d old PaymentClusters',
+            old_count - self.objects.all().count())
+
     cluster_key = models.CharField(max_length=255)
     cluster_id = models.CharField(max_length=255)
 
     paid = models.BooleanField(default=False)
     closed = models.BooleanField(default=False)
+
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)

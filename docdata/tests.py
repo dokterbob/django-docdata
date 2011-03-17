@@ -106,42 +106,34 @@ class PaymentTest(TestCase):
         pc.create_cluster(**self.default_data)
         self.assertTrue(pc.payment_url())
 
-    def test_status_changed(self):
-        """ Test whether status_change requests are handled well."""
+    def test_status_fail(self):
+        """ Test whether status_change requests are handled not well."""
 
-        self.client.get('/status_change/')
+        response = self.client.get('/status_change/')
+        self.failUnlessEqual(response.status_code, 404)
+
+        response = self.client.get('/status_change/?merchant_transaction_id=kaas')
+        self.failUnlessEqual(response.status_code, 404)
+
+    def test_transaction_id(self):
+        pc = PaymentCluster(pk=self._get_unique_id())
+        pc.save()
+
+        transaction_id = pc.get_transaction_id()
+        pc2 = PaymentCluster.get_by_transaction_id(transaction_id)
+
+        self.assertEqual(pc.pk, pc2.pk)
+
+    def test_status_success(self):
+        # Create a cluster
+        pc = PaymentCluster(pk=self._get_unique_id())
+        pc.create_cluster(**self.default_data)
+        print pc.pk
+        transaction_id = pc.get_transaction_id()
+
+        from urllib import urlencode
+        url = '/status_change/?'+ \
+              urlencode({'merchant_transaction_id': transaction_id})
+        response = self.client.get(url)
         self.failUnlessEqual(response.status_code, 200)
 
-    # def test_paysuccess(self):
-    #     """ Test whether succesful payments are processed. """
-    #
-    #     # Create a cluster
-    #     pc = PaymentCluster(pk=self._get_unique_id())
-    #     pc.create_cluster(**self.default_data)
-    #
-    #     url = pc.show_payment_url()
-    #     print 'Please go to %s and perform a successful payment. Press <ENTER> to proceed.' % url
-    #
-    #     raw_input()
-    #
-    #     pc.update_status()
-    #
-    #     self.assertTrue(pc.paid)
-    #     self.assertTrue(pc.closed)
-    #
-    # def test_payfailure(self):
-    #     """ Test whether succesful payments are processed. """
-    #
-    #     # Create a cluster
-    #     pc = PaymentCluster(pk=self._get_unique_id())
-    #     pc.create_cluster(**self.default_data)
-    #
-    #     url = pc.show_payment_url()
-    #     print 'Please go to %s and cancel the payment. Press <ENTER> to proceed.' % url
-    #
-    #     raw_input()
-    #
-    #     pc.update_status()
-    #
-    #     self.assertFalse(pc.paid)
-    #     self.assertTrue(pc.closed)

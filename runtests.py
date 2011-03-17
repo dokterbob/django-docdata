@@ -1,7 +1,9 @@
 #!/usr/bin/env python
-import sys
+import sys, logging
 from os.path import dirname, abspath
 from django.conf import settings
+
+logging.basicConfig(level=logging.DEBUG)
 
 try:
     from test_secrets import MERCHANT_NAME, MERCHANT_PASSWORD
