@@ -5,7 +5,10 @@ when you run "manage.py test".
 Replace this with more appropriate tests for your application.
 """
 
+from urllib import urlencode
+
 from django.test import TestCase
+from django.core.urlresolvers import reverse
 
 from docdata.models import PaymentCluster
 from docdata.exceptions import PaymentException
@@ -27,6 +30,8 @@ class PaymentTest(TestCase):
             "description" : "test transaction",
             "days_pay_period" : "14",
     }
+
+    status_change_url = reverse('status_change')
 
     def _get_unique_id(self):
         """ Create a unique key from the POSIX timestamp. """
@@ -109,10 +114,12 @@ class PaymentTest(TestCase):
     def test_status_fail(self):
         """ Test whether status_change requests are handled not well."""
 
-        response = self.client.get('/status_change/')
+        url = self.status_change_url
+
+        response = self.client.get(url)
         self.failUnlessEqual(response.status_code, 404)
 
-        response = self.client.get('/status_change/?merchant_transaction_id=kaas')
+        response = self.client.get(url+'?merchant_transaction_id=kaas')
         self.failUnlessEqual(response.status_code, 404)
 
     def test_transaction_id(self):
@@ -131,9 +138,9 @@ class PaymentTest(TestCase):
         print pc.pk
         transaction_id = pc.get_transaction_id()
 
-        from urllib import urlencode
-        url = '/status_change/?'+ \
-              urlencode({'merchant_transaction_id': transaction_id})
+        url = self.status_change_url
+        url += '?' + urlencode({'merchant_transaction_id': transaction_id})
+
         response = self.client.get(url)
         self.failUnlessEqual(response.status_code, 200)
 
