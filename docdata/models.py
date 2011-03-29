@@ -83,7 +83,7 @@ class PaymentCluster(models.Model):
             logger.warning('Status update requested but no change detected '+
                            'for transaction_id \'%s\'', self.transaction_id)
 
-    def payment_url(self):
+    def payment_url(self, **kwargs):
         """ Return the URL to redirect to for actual payment. """
 
         assert self.cluster_key
@@ -91,6 +91,8 @@ class PaymentCluster(models.Model):
         data = {'merchant_name': MERCHANT_NAME,
                 'payment_cluster_key': self.cluster_key
         }
+
+        data.update(**kwargs)
 
         return self.interface.show_payment_cluster_url(**data)
 
