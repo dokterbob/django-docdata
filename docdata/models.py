@@ -3,9 +3,14 @@ logger = logging.getLogger(__name__)
 
 from django.db import models
 
+from docdata.signals import payment_status_changed
 from docdata.interface import PaymentInterface
 from docdata.settings import MERCHANT_NAME, MERCHANT_PASSWORD, DEBUG, \
                              PROFILE
+
+# Connect listener to signal
+from listeners import payment_update_logger
+payment_status_changed.connect(payment_update_logger)
 
 
 class PaymentCluster(models.Model):
@@ -55,12 +60,28 @@ class PaymentCluster(models.Model):
 
         result = self.interface.status_payment_cluster(**data)
 
+        old_paid = self.paid
+        old_closed = self.closed
+
         self.paid = result['paid']
         self.closed = result['closed']
 
-        # TODO: Emit signal here, containing PaymentCluster object
-
         self.save()
+
+        # Status changed? Send signal!
+        if old_paid != self.paid or old_closed != self.closed:
+            results = payment_update_logger.send_robust(sender=self,
+                                                        old_paid=old_paid,
+                                                        old_cloder=old_closed)
+
+            # Re-raise exceptions in listeners
+            for (receiver, response) in results:
+                if isinstance(response, Exception):
+                    raise response
+        else:
+            # Status update request without change? Weird! Log!
+            logger.warning('Status update requested but no change detected '+
+                           'for transaction_id \'%s\'', self.transaction_id)
 
     def payment_url(self):
         """ Return the URL to redirect to for actual payment. """

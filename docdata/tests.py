@@ -130,7 +130,7 @@ class PaymentTest(TestCase):
         pc = PaymentCluster(pk=self.get_transaction_id())
         pc.save()
 
-        transaction_id = self.get_transaction_id()
+        transaction_id = pc.transaction_id
         pc2 = PaymentCluster.get_by_transaction_id(transaction_id)
 
         self.assertEqual(pc.pk, pc2.pk)
