@@ -29,7 +29,7 @@ class PaymentInterface(object):
     """
 
     TEST_URL = 'https://test.tripledeal.com/ps/com.tripledeal.paymentservice.servlets.PaymentService'
-    PROD_URL = ''
+    PROD_URL = 'https://www.tripledeal.com/ps/com.tripledeal.paymentservice.servlets.PaymentService'
 
     def _check_errors(self, resultdom):
         """ Check for errors in the DOM, raise PaymentException if found. """
