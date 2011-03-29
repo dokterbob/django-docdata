@@ -5,35 +5,20 @@ from django.db import models
 
 from docdata.interface import PaymentInterface
 from docdata.settings import MERCHANT_NAME, MERCHANT_PASSWORD, DEBUG, \
-                             PROFILE, TRANSACTION_ID_PREFIX
+                             PROFILE
 
 
 class PaymentCluster(models.Model):
     """ Payment cluster model. """
-
-    def get_transaction_id(self):
-        """ Generate a transaction id from this cluster's public key. """
-
-        assert self.pk, 'No public key available for unique reference'
-
-        return '%s-%d' % (TRANSACTION_ID_PREFIX, self.pk)
 
     @classmethod
     def get_by_transaction_id(cls, transaction_id):
         """ Get the payment cluster belonging to a specific transaction_id. """
         assert transaction_id
 
-        pk = transaction_id[len(TRANSACTION_ID_PREFIX)+1:]
-
-        try:
-            pk = int(pk)
-        except ValueError:
-            raise ValueError('Not a valid transaction_id. '+
-                             'Received %s, expected %s-<pk>' % \
-                              (transaction_id, TRANSACTION_ID_PREFIX))
-
-        logger.debug('Looking up transaction with pk %d', pk)
-        return cls.objects.get(pk=pk)
+        logger.debug('Looking up transaction with transaction id %s',
+                     transaction_id)
+        return cls.objects.get(pk=transaction_id)
 
     def __init__(self, *args, **kwargs):
         """ Make sure we have an interface available. """
@@ -41,19 +26,19 @@ class PaymentCluster(models.Model):
 
         self.interface = PaymentInterface(debug=DEBUG)
 
-
     def create_cluster(self, **kwargs):
         """ Create a new payment cluster over at Docdata and save key and id. """
 
         data = {'merchant_name': MERCHANT_NAME,
                 'merchant_password': MERCHANT_PASSWORD,
-                'merchant_transaction_id': self.get_transaction_id(),
+                'merchant_transaction_id': self.transaction_id,
                 'profile': PROFILE,}
 
         data.update(kwargs)
 
         result = self.interface.new_payment_cluster(**data)
 
+        self.transaction_id = data['merchant_transaction_id']
         self.cluster_key = result['payment_cluster_key']
         self.cluster_id = result['payment_cluster_id']
 
@@ -101,6 +86,8 @@ class PaymentCluster(models.Model):
 
         logging.info('Deleted %d old PaymentClusters',
             old_count - self.objects.all().count())
+
+    transaction_id = models.CharField(max_length=35, primary_key=True)
 
     cluster_key = models.CharField(max_length=255)
     cluster_id = models.CharField(max_length=255)
