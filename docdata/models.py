@@ -31,6 +31,10 @@ class PaymentCluster(models.Model):
 
         self.interface = PaymentInterface(debug=DEBUG)
 
+    def __unicode__(self):
+        """ Our natural representation is the transaction id. """
+        return self.transaction_id
+
     def create_cluster(self, **kwargs):
         """ Create a new payment cluster over at Docdata and save key and id. """
 
@@ -70,7 +74,7 @@ class PaymentCluster(models.Model):
 
         # Status changed? Send signal!
         if old_paid != self.paid or old_closed != self.closed:
-            results = payment_update_logger.send_robust(sender=self,
+            results = payment_status_changed.send_robust(sender=self,
                                                         old_paid=old_paid,
                                                         old_cloder=old_closed)
 
