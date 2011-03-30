@@ -13,5 +13,9 @@ def get_setting(name, default=None):
 
 MERCHANT_NAME = get_setting('MERCHANT_NAME')
 MERCHANT_PASSWORD = get_setting('MERCHANT_PASSWORD')
+""" Login details. """
+
 DEBUG = get_setting('DEBUG', True)
+""" Use testing environment. """
+
 PROFILE = get_setting('PROFILE', 'standard')
