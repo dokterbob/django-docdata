@@ -53,6 +53,22 @@ class PaymentTest(TestCase):
         self.assertTrue(pc.cluster_key)
         self.assertTrue(pc.cluster_id)
 
+    def test_createclusterunicode(self):
+        """
+        Test creating a cluster with some unicode data
+        Regression test.
+        """
+        pc = PaymentCluster(pk=self.get_transaction_id())
+
+        self.default_data.update({'client_firstname': u'Margr\xe8t'})
+
+        pc.create_cluster(**self.default_data)
+
+        pc.save()
+
+        self.assertTrue(pc.cluster_key)
+        self.assertTrue(pc.cluster_id)
+
     def test_clusterfail(self):
         pc = PaymentCluster(pk=self.get_transaction_id())
 

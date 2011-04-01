@@ -1,8 +1,8 @@
 import logging
 logger = logging.getLogger(__name__)
 
-from urllib import urlencode
-
+# Use Django's urlencode as it is unicode-aware
+from django.utils.http import urlencode
 from xml.dom import minidom
 
 from docdata.exceptions import PaymentException, PaymentStatusException
