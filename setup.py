@@ -7,9 +7,14 @@ try:
 except:
     README = None
 
-try: 
+try:
+    REQUIREMENTS = open('requirements.txt').read()
+except:
+    REQUIREMENTS = None
+
+try:
     LICENSE = open('LICENSE.txt').read()
-except: 
+except:
     LICENSE = None
 
 setup(
@@ -17,6 +22,7 @@ setup(
     version = '0.1',
     description='Python/Django client to the Docdata payment system.',
     long_description=README,
+    install_requires=REQUIREMENTS,
     author = 'Mathijs de Bruin',
     author_email = 'mathijs@mathijsfietst.nl',
     license = LICENSE,
@@ -33,4 +39,8 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Environment :: Web Environment',
     ],
+    test_suite = 'setuptest.setuptest.SetupTestSuite',
+    tests_require = (
+        'django-setuptest',
+    ),
 )

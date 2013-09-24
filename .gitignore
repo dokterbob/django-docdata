@@ -1,8 +1,12 @@
 dist
 build
-*.egg-info
-*.pyc
-*.pyo
+*.egg*
+*.py[c|o]
 .DS\_Store
+
+# Credentials for running tests
 test_secrets.py
 
+# Tests slug
+pep8.txt
+coverage.xml
