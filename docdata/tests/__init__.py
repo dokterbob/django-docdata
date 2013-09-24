@@ -17,12 +17,21 @@ from django.utils.unittest.case import skipUnless
 from django.core.urlresolvers import reverse
 
 from docdata.models import PaymentCluster
-from docdata.exceptions import PaymentException
+from docdata.exceptions import PaymentException, PaymentStatusException
 from docdata.interface import PaymentInterface
 
 
 class PaymentTestBase(TestCase):
     """ Base class for payment tests. """
+
+    def setUp(self):
+        """ Common setup. """
+
+        # Setup a payment interface
+        self.interface = PaymentInterface()
+
+        # Status change URL
+        self.status_change_url = reverse('status_change')
 
     default_data = {
         'client_id': '001',
@@ -39,8 +48,6 @@ class PaymentTestBase(TestCase):
         'description': 'test transaction',
         'days_pay_period': '14',
     }
-
-    status_change_url = reverse('status_change')
 
     def _get_unique_id(self):
         """ Create a random id. """
@@ -191,18 +198,15 @@ class OfflinePaymentTests(PaymentTestBase):
 
         return open(filename).read()
 
-    def test_status_payment_cluster(self):
-        """ Test parsing the status for a payment cluster. """
+    def test_status_xml_std(self):
+        """ Test parsing the xml_std status report. """
 
         # Setup a mock
         def report_xml_std_mock(url, request):
             return self.read_file('report_xml_std.xml')
 
-        # Setup a payment interface
-        interface = PaymentInterface()
-
         with HTTMock(report_xml_std_mock):
-            result = interface.status_payment_cluster(
+            result = self.interface.status_payment_cluster(
                 report_type='xml_std',
                 merchant_name='yolo',
                 merchant_password='yolo2',
@@ -221,3 +225,97 @@ class OfflinePaymentTests(PaymentTestBase):
                 'payout_process': 'new',
                 'last_partial_payment_method': 'acceptgironew-nl-nlg'
             })
+
+    def test_status_txt_simple(self):
+        """ Test parsing the txt_simple status report. """
+
+        # Success
+        with HTTMock(lambda url, request: 'Y'):
+            result = self.interface.status_payment_cluster(
+                report_type='txt_simple',
+                merchant_name='yolo',
+                merchant_password='yolo2',
+                payment_cluster_key=(
+                    '90B1B94C4DAE9C207E67C48432DC3004126A7F53A0E7F58AF227D27'
+                    '499'
+                )
+            )
+
+            self.assertEquals(result, True)
+
+        # Fail
+        with HTTMock(lambda url, request: 'N'):
+            result = self.interface.status_payment_cluster(
+                report_type='txt_simple',
+                merchant_name='yolo',
+                merchant_password='yolo2',
+                payment_cluster_key=(
+                    '90B1B94C4DAE9C207E67C48432DC3004126A7F53A0E7F58AF227D27'
+                    '499'
+                )
+            )
+
+            self.assertEquals(result, False)
+
+        # Weird status
+        with HTTMock(lambda url, request: 'bananas'):
+            self.assertRaises(
+                PaymentStatusException,
+                lambda: self.interface.status_payment_cluster(
+                    report_type='txt_simple',
+                    merchant_name='yolo',
+                    merchant_password='yolo2',
+                    payment_cluster_key=(
+                        '90B1B94C4DAE9C207E67C48432DC3004126A7F53A0E7F58AF227D27'
+                        '499'
+                    )
+                )
+            )
+
+    def test_status_txt_simple2(self):
+        """ Test parsing the txt_simple2 status report. """
+
+        # Success
+        with HTTMock(lambda url, request: 'YY'):
+            result = self.interface.status_payment_cluster(
+                report_type='txt_simple2',
+                merchant_name='yolo',
+                merchant_password='yolo2',
+                payment_cluster_key=(
+                    '90B1B94C4DAE9C207E67C48432DC3004126A7F53A0E7F58AF227D27'
+                    '499'
+                )
+            )
+
+            self.assertEquals(result['paid'], True)
+            self.assertEquals(result['closed'], True)
+
+        # Fail
+        with HTTMock(lambda url, request: 'NN'):
+            result = self.interface.status_payment_cluster(
+                report_type='txt_simple2',
+                merchant_name='yolo',
+                merchant_password='yolo2',
+                payment_cluster_key=(
+                    '90B1B94C4DAE9C207E67C48432DC3004126A7F53A0E7F58AF227D27'
+                    '499'
+                )
+            )
+
+            self.assertEquals(result['paid'], False)
+            self.assertEquals(result['closed'], False)
+
+        # Weird status
+        with HTTMock(lambda url, request: 'bananas'):
+            self.assertRaises(
+                PaymentStatusException,
+                lambda: self.interface.status_payment_cluster(
+                    report_type='txt_simple2',
+                    merchant_name='yolo',
+                    merchant_password='yolo2',
+                    payment_cluster_key=(
+                        '90B1B94C4DAE9C207E67C48432DC3004126A7F53A0E7F58AF227D27'
+                        '499'
+                    )
+                )
+            )
