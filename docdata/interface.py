@@ -1,12 +1,14 @@
 import logging
 logger = logging.getLogger(__name__)
 
-# Use Django's urlencode as it is unicode-aware
-from django.utils.http import urlencode
+import requests
+
 from xml.dom import minidom
 
+# Use Django's urlencode as it is unicode-aware
+from django.utils.http import urlencode
+
 from docdata.exceptions import PaymentException, PaymentStatusException
-from docdata.utils import urlopen
 
 
 def yntobool(char):
@@ -87,10 +89,10 @@ class PaymentInterface(object):
         assert 'days_pay_period' in kwargs
 
         # Raises URLError on errors.
-        result = urlopen(self.url, urlencode(kwargs))
+        result = requests.get(self.url, params=kwargs, verify=True)
 
         # Parse the result XML
-        resultdom = minidom.parse(result)
+        resultdom = minidom.parseString(result.content)
 
         # Check for errors
         self._check_errors(resultdom)
@@ -121,10 +123,10 @@ class PaymentInterface(object):
                                'xml_ext',
                                'xml_all')
 
-        result = urlopen(self.url, urlencode(kwargs))
+        result = requests.get(self.url, params=kwargs, verify=True)
 
         if report_type.startswith('txt_'):
-            data = result.read()
+            data = result.content
 
             # Check for errors
             if data.startswith('<?xml'):
@@ -153,7 +155,7 @@ class PaymentInterface(object):
             assert report_type.startswith('xml_')
 
             # Parse the result XML
-            resultdom = minidom.parse(result)
+            resultdom = minidom.parseString(result.content)
 
             # Check for errors
             self._check_errors(resultdom)
