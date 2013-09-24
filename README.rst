@@ -7,6 +7,12 @@ django-docdata
 Python/Django client to the Docdata payment system.
 *****************************************************
 
+Who uses this
+=============
+The `1%CLUB <https://onepercentclub.com/>`_ is using this in their Open Source crowdfunding platform `Project Bluebottle <https://github.com/onepercentclub/bluebottle>`. Some version of this software has been included in `pcommerce.payment.docdata <https://pypi.python.org/pypi/pcommerce.payment.docdata/>` by Huub Bouma. And
+surely, we are using this package in-house as well on a fairly large production
+site.
+
 Running the tests
 =================
 A significant portion of the tests currently requires a testing account and
