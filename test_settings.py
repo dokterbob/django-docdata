@@ -46,11 +46,14 @@ LOGGING = {
     }
 }
 
+# Make absolutely sure we're running in debug mode
+DOCDATA_DEBUG = True
+
 try:
     from test_secrets import DOCDATA_MERCHANT_NAME, DOCDATA_MERCHANT_PASSWORD
 
     # Run online tests
-    DOCDATA_ONLINE_TESTS = False
+    DOCDATA_ONLINE_TESTS = True
 
 except ImportError, e:
     print 'Warning:', e
