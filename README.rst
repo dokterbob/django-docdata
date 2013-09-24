@@ -9,7 +9,7 @@ Python/Django client to the Docdata payment system.
 
 Who uses this
 =============
-The `1%CLUB <https://onepercentclub.com/>`_ is using this in their Open Source crowdfunding platform `Project Bluebottle <https://github.com/onepercentclub/bluebottle>`. Some version of this software has been included in `pcommerce.payment.docdata <https://pypi.python.org/pypi/pcommerce.payment.docdata/>` by Huub Bouma. And
+The `1%CLUB <https://onepercentclub.com/>`_ is using this in their Open Source crowdfunding platform `Project Bluebottle <https://github.com/onepercentclub/bluebottle>`_. Some version of this software has been included in `pcommerce.payment.docdata <https://pypi.python.org/pypi/pcommerce.payment.docdata/>`_ by Huub Bouma. And
 surely, we are using this package in-house over at `Visualspace <http://www.visualspace.nl/>`_ as well, ona fairly large production webshop.
 
 Running the tests
@@ -30,6 +30,8 @@ implementation manual.
 Settings
 ========
 `DOCDATA_MERCHANT_NAME`
+    Credentials as supplied by the payment provider.
+
 `DOCDATA_MERCHANT_PASSWORD`
     Credentials as supplied by the payment provider.
 
