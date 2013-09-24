@@ -5,7 +5,11 @@ when you run "manage.py test".
 Replace this with more appropriate tests for your application.
 """
 
+from os import path
+
 from urllib import urlencode
+
+from httmock import HTTMock
 
 from django.test import TestCase
 from django.conf import settings
@@ -14,6 +18,7 @@ from django.core.urlresolvers import reverse
 
 from docdata.models import PaymentCluster
 from docdata.exceptions import PaymentException
+from docdata.interface import PaymentInterface
 
 
 class PaymentTestBase(TestCase):
@@ -178,3 +183,33 @@ class OfflinePaymentTests(PaymentTestBase):
         pc2 = PaymentCluster.get_by_transaction_id(transaction_id)
 
         self.assertEqual(pc.pk, pc2.pk)
+
+    def read_file(self, filename):
+        """ Read contents from file in current directory. """
+
+        filename = path.join(path.dirname(__file__), filename)
+
+        return open(filename).read()
+
+    def test_status_payment_cluster(self):
+        """ Test parsing the status for a payment cluster. """
+
+        # Setup a mock
+        def report_xml_std_mock(url, request):
+            return self.read_file('report_xml_std.xml')
+
+        # Setup a payment interface
+        interface = PaymentInterface()
+
+        with HTTMock(report_xml_std_mock):
+            result = interface.status_payment_cluster(
+                report_type='xml_std',
+                merchant_name='yolo',
+                merchant_password='yolo2',
+                payment_cluster_key=(
+                    '90B1B94C4DAE9C207E67C48432DC3004126A7F53A0E7F58AF227D27'
+                    '499'
+                )
+            )
+
+            print result

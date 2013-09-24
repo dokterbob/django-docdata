@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<status_payment_cluster>
+    <status>
+        <payment_cluster_process>started</payment_cluster_process>
+        <last_partial_payment_process>new</last_partial_payment_process>
+        <last_partial_payment_method>acceptgironew-nl-nlg</last_partial_payment_method>
+        <payout_process>new</payout_process>
+        <meta_considered_safe>false</meta_considered_safe>
+        <meta_charged_back>N</meta_charged_back>
+        <meta_amount_received>none</meta_amount_received>
+    </status>
+</status_payment_cluster>
