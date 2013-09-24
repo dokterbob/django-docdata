@@ -1,6 +1,9 @@
 django-docdata
 ##############
 
+.. image:: https://secure.travis-ci.org/dokterbob/django-docdata.png?branch=master
+    :target: http://travis-ci.org/dokterbob/django-docdata
+
 Python/Django client to the Docdata payment system.
 *****************************************************
 
