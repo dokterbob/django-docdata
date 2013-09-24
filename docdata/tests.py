@@ -16,19 +16,19 @@ from docdata.exceptions import PaymentException
 
 class PaymentTest(TestCase):
     default_data = {
-            "client_id" : "001",
-            "price" : "10.00",
-            "cur_price" : "eur",
-            "client_email" : "user@domein.nl",
-            "client_firstname" : "Triple",
-            "client_lastname" : "Deal",
-            "client_address" : "Euclideslaan 2",
-            "client_zip" : "3584 BN",
-            "client_city" : "Utrecht",
-            "client_country" : "nl",
-            "client_language" : "nl",
-            "description" : "test transaction",
-            "days_pay_period" : "14",
+        'client_id': '001',
+        'price': '10.00',
+        'cur_price': 'eur',
+        'client_email': 'user@domein.nl',
+        'client_firstname': 'Triple',
+        'client_lastname': 'Deal',
+        'client_address': 'Euclideslaan 2',
+        'client_zip': '3584 BN',
+        'client_city': 'Utrecht',
+        'client_country': 'nl',
+        'client_language': 'nl',
+        'description': 'test transaction',
+        'days_pay_period': '14',
     }
 
     status_change_url = reverse('status_change')
@@ -40,7 +40,7 @@ class PaymentTest(TestCase):
         return random.randint(1, 65535)
 
     def get_transaction_id(self):
-        unique_id  = self._get_unique_id()
+        unique_id = self._get_unique_id()
         return 'docdata-test-%d' % unique_id
 
     def test_createcluster(self):
@@ -163,4 +163,3 @@ class PaymentTest(TestCase):
 
         response = self.client.get(url)
         self.failUnlessEqual(response.status_code, 200)
-

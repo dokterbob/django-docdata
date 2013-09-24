@@ -5,8 +5,9 @@ from django.db import models
 
 from docdata.signals import payment_status_changed
 from docdata.interface import PaymentInterface
-from docdata.settings import MERCHANT_NAME, MERCHANT_PASSWORD, DEBUG, \
-                             PROFILE
+from docdata.settings import (
+    MERCHANT_NAME, MERCHANT_PASSWORD, DEBUG, PROFILE
+)
 
 # Connect listener to signal
 from listeners import payment_update_logger
@@ -18,7 +19,9 @@ class PaymentCluster(models.Model):
 
     @classmethod
     def get_by_transaction_id(cls, transaction_id):
-        """ Get the payment cluster belonging to a specific transaction_id. """
+        """
+        Get the payment cluster belonging to a specific transaction_id.
+        """
         assert transaction_id
 
         logger.debug('Looking up transaction with transaction id %s',
@@ -36,12 +39,16 @@ class PaymentCluster(models.Model):
         return self.transaction_id
 
     def create_cluster(self, **kwargs):
-        """ Create a new payment cluster over at Docdata and save key and id. """
+        """
+        Create a new payment cluster over at Docdata and save key and id.
+        """
 
-        data = {'merchant_name': MERCHANT_NAME,
-                'merchant_password': MERCHANT_PASSWORD,
-                'merchant_transaction_id': self.transaction_id,
-                'profile': PROFILE,}
+        data = {
+            'merchant_name': MERCHANT_NAME,
+            'merchant_password': MERCHANT_PASSWORD,
+            'merchant_transaction_id': self.transaction_id,
+            'profile': PROFILE,
+        }
 
         data.update(kwargs)
 
@@ -57,10 +64,12 @@ class PaymentCluster(models.Model):
         """ Go out and update the payment status, and save to database. """
 
         assert self.cluster_key
-        data = {'merchant_name': MERCHANT_NAME,
-                'merchant_password': MERCHANT_PASSWORD,
-                'payment_cluster_key': self.cluster_key,
-                'report_type': 'txt_simple2'}
+        data = {
+            'merchant_name': MERCHANT_NAME,
+            'merchant_password': MERCHANT_PASSWORD,
+            'payment_cluster_key': self.cluster_key,
+            'report_type': 'txt_simple2'
+        }
 
         result = self.interface.status_payment_cluster(**data)
 
@@ -74,9 +83,9 @@ class PaymentCluster(models.Model):
 
         # Status changed? Send signal!
         if old_paid != self.paid or old_closed != self.closed:
-            results = payment_status_changed.send_robust(sender=self,
-                                                        old_paid=old_paid,
-                                                        old_cloder=old_closed)
+            results = payment_status_changed.send_robust(
+                sender=self, old_paid=old_paid, old_cloder=old_closed
+            )
 
             # Re-raise exceptions in listeners
             for (receiver, response) in results:
@@ -84,16 +93,19 @@ class PaymentCluster(models.Model):
                     raise response
         else:
             # Status update request without change? Weird! Log!
-            logger.warning('Status update requested but no change detected '+
-                           'for transaction_id \'%s\'', self.transaction_id)
+            logger.warning(
+                'Status update requested but no change detected '
+                'for transaction_id \'%s\'', self.transaction_id
+            )
 
     def payment_url(self, **kwargs):
         """ Return the URL to redirect to for actual payment. """
 
         assert self.cluster_key
 
-        data = {'merchant_name': MERCHANT_NAME,
-                'payment_cluster_key': self.cluster_key
+        data = {
+            'merchant_name': MERCHANT_NAME,
+            'payment_cluster_key': self.cluster_key
         }
 
         data.update(**kwargs)
@@ -111,8 +123,10 @@ class PaymentCluster(models.Model):
         oldest = datetime.now() - timedelta(days=days)
         self.objects.filter(closed=True, modified__lt=oldest).delete()
 
-        logging.info('Deleted %d old PaymentClusters',
-            old_count - self.objects.all().count())
+        logging.info(
+            'Deleted %d old PaymentClusters',
+            old_count - self.objects.all().count()
+        )
 
     transaction_id = models.CharField(max_length=35, primary_key=True)
 

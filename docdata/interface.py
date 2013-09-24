@@ -28,8 +28,14 @@ class PaymentInterface(object):
     used easily in non-Django applications.
     """
 
-    TEST_URL = 'https://test.tripledeal.com/ps/com.tripledeal.paymentservice.servlets.PaymentService'
-    PROD_URL = 'https://www.tripledeal.com/ps/com.tripledeal.paymentservice.servlets.PaymentService'
+    TEST_URL = (
+        'https://test.tripledeal.com/ps/'
+        'com.tripledeal.paymentservice.servlets.PaymentService'
+    )
+    PROD_URL = (
+        'https://www.tripledeal.com/ps/'
+        'com.tripledeal.paymentservice.servlets.PaymentService'
+    )
 
     def _check_errors(self, resultdom):
         """ Check for errors in the DOM, raise PaymentException if found. """
@@ -168,8 +174,6 @@ class PaymentInterface(object):
             assert data
 
             return data
-
-
 
     def show_payment_cluster_url(self, **kwargs):
         """ Return the URL for show_payment_cluster. """
