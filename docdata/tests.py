@@ -8,13 +8,17 @@ Replace this with more appropriate tests for your application.
 from urllib import urlencode
 
 from django.test import TestCase
+from django.conf import settings
+from django.utils.unittest.case import skipUnless
 from django.core.urlresolvers import reverse
 
 from docdata.models import PaymentCluster
 from docdata.exceptions import PaymentException
 
 
-class PaymentTest(TestCase):
+class PaymentTestBase(TestCase):
+    """ Base class for payment tests. """
+
     default_data = {
         'client_id': '001',
         'price': '10.00',
@@ -34,7 +38,8 @@ class PaymentTest(TestCase):
     status_change_url = reverse('status_change')
 
     def _get_unique_id(self):
-        """ Create a unique key from the POSIX timestamp. """
+        """ Create a random id. """
+
         import random
         # (max value for 2 byte unsigned integer)
         return random.randint(1, 65535)
@@ -42,6 +47,11 @@ class PaymentTest(TestCase):
     def get_transaction_id(self):
         unique_id = self._get_unique_id()
         return 'docdata-test-%d' % unique_id
+
+
+@skipUnless(settings.DOCDATA_ONLINE_TESTS, 'Skipping online tests.')
+class OnlinePaymentTests(PaymentTestBase):
+    """ Tests requiring payment credentials to be set. """
 
     def test_createcluster(self):
         pc = PaymentCluster(pk=self.get_transaction_id())
@@ -68,6 +78,43 @@ class PaymentTest(TestCase):
 
         self.assertTrue(pc.cluster_key)
         self.assertTrue(pc.cluster_id)
+
+    def test_report(self):
+        """ Test payment cluster status reports. """
+
+        # Create a cluster
+        pc = PaymentCluster(pk=self.get_transaction_id())
+        pc.create_cluster(**self.default_data)
+
+        pc.update_status()
+
+        self.assertFalse(pc.paid)
+        self.assertFalse(pc.closed)
+
+    def test_showurl(self):
+        """ See whether we can generate a show url. """
+
+        # Create a cluster
+        pc = PaymentCluster(pk=self.get_transaction_id())
+        pc.create_cluster(**self.default_data)
+        self.assertTrue(pc.payment_url())
+
+    def test_status_success(self):
+        # Create a cluster
+        pc = PaymentCluster(pk=self.get_transaction_id())
+        pc.create_cluster(**self.default_data)
+        print pc.pk
+        transaction_id = pc.transaction_id
+
+        url = self.status_change_url
+        url += '?' + urlencode({'merchant_transaction_id': transaction_id})
+
+        response = self.client.get(url)
+        self.failUnlessEqual(response.status_code, 200)
+
+
+class OfflinePaymentTests(PaymentTestBase):
+    """ Tests not requiring payment credentials to be set. """
 
     def test_clusterfail(self):
         pc = PaymentCluster(pk=self.get_transaction_id())
@@ -103,18 +150,6 @@ class PaymentTest(TestCase):
             **data
         )
 
-    def test_report(self):
-        """ Test payment cluster status reports. """
-
-        # Create a cluster
-        pc = PaymentCluster(pk=self.get_transaction_id())
-        pc.create_cluster(**self.default_data)
-
-        pc.update_status()
-
-        self.assertFalse(pc.paid)
-        self.assertFalse(pc.closed)
-
     def test_reportfail(self):
         """ Test whether errors in report code are caught. """
 
@@ -122,14 +157,6 @@ class PaymentTest(TestCase):
         pc = PaymentCluster(pk=self.get_transaction_id())
         pc.cluster_key = 'banana'
         self.assertRaises(PaymentException, pc.update_status)
-
-    def test_showurl(self):
-        """ See whether we can generate a show url. """
-
-        # Create a cluster
-        pc = PaymentCluster(pk=self.get_transaction_id())
-        pc.create_cluster(**self.default_data)
-        self.assertTrue(pc.payment_url())
 
     def test_status_fail(self):
         """ Test whether status_change requests are handled not well."""
@@ -150,16 +177,3 @@ class PaymentTest(TestCase):
         pc2 = PaymentCluster.get_by_transaction_id(transaction_id)
 
         self.assertEqual(pc.pk, pc2.pk)
-
-    def test_status_success(self):
-        # Create a cluster
-        pc = PaymentCluster(pk=self.get_transaction_id())
-        pc.create_cluster(**self.default_data)
-        print pc.pk
-        transaction_id = pc.transaction_id
-
-        url = self.status_change_url
-        url += '?' + urlencode({'merchant_transaction_id': transaction_id})
-
-        response = self.client.get(url)
-        self.failUnlessEqual(response.status_code, 200)

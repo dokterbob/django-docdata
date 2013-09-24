@@ -24,8 +24,18 @@ except ImportError:
 
 try:
     from test_secrets import DOCDATA_MERCHANT_NAME, DOCDATA_MERCHANT_PASSWORD
-except ImportError:
-    sys.exit(
-        'Must define DOCDATA_MERCHANT_NAME and DOCDATA_MERCHANT_PASSWORD '
-        'in test_secrets.py first!'
+
+    # Run online tests
+    DOCDATA_ONLINE_TESTS = False
+
+except ImportError, e:
+    print 'Warning:', e
+    print (
+        'DOCDATA_MERCHANT_NAME and DOCDATA_MERCHANT_PASSWORD '
+        'are not set in test_settings.py. Online tests will be skipped.'
     )
+
+    # Do not run online tests
+    DOCDATA_MERCHANT_NAME = 'bogus_merchant'
+    DOCDATA_MERCHANT_PASSWORD = 'bogus_pw'
+    DOCDATA_ONLINE_TESTS = False
