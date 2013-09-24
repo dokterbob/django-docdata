@@ -79,43 +79,6 @@ class OnlinePaymentTests(PaymentTestBase):
         self.assertTrue(pc.cluster_key)
         self.assertTrue(pc.cluster_id)
 
-    def test_report(self):
-        """ Test payment cluster status reports. """
-
-        # Create a cluster
-        pc = PaymentCluster(pk=self.get_transaction_id())
-        pc.create_cluster(**self.default_data)
-
-        pc.update_status()
-
-        self.assertFalse(pc.paid)
-        self.assertFalse(pc.closed)
-
-    def test_showurl(self):
-        """ See whether we can generate a show url. """
-
-        # Create a cluster
-        pc = PaymentCluster(pk=self.get_transaction_id())
-        pc.create_cluster(**self.default_data)
-        self.assertTrue(pc.payment_url())
-
-    def test_status_success(self):
-        # Create a cluster
-        pc = PaymentCluster(pk=self.get_transaction_id())
-        pc.create_cluster(**self.default_data)
-        print pc.pk
-        transaction_id = pc.transaction_id
-
-        url = self.status_change_url
-        url += '?' + urlencode({'merchant_transaction_id': transaction_id})
-
-        response = self.client.get(url)
-        self.failUnlessEqual(response.status_code, 200)
-
-
-class OfflinePaymentTests(PaymentTestBase):
-    """ Tests not requiring payment credentials to be set. """
-
     def test_clusterfail(self):
         pc = PaymentCluster(pk=self.get_transaction_id())
 
@@ -150,6 +113,18 @@ class OfflinePaymentTests(PaymentTestBase):
             **data
         )
 
+    def test_report(self):
+        """ Test payment cluster status reports. """
+
+        # Create a cluster
+        pc = PaymentCluster(pk=self.get_transaction_id())
+        pc.create_cluster(**self.default_data)
+
+        pc.update_status()
+
+        self.assertFalse(pc.paid)
+        self.assertFalse(pc.closed)
+
     def test_reportfail(self):
         """ Test whether errors in report code are caught. """
 
@@ -158,8 +133,32 @@ class OfflinePaymentTests(PaymentTestBase):
         pc.cluster_key = 'banana'
         self.assertRaises(PaymentException, pc.update_status)
 
+    def test_showurl(self):
+        """ See whether we can generate a show url. """
+
+        # Create a cluster
+        pc = PaymentCluster(pk=self.get_transaction_id())
+        pc.create_cluster(**self.default_data)
+        self.assertTrue(pc.payment_url())
+
+    def test_status_success(self):
+        # Create a cluster
+        pc = PaymentCluster(pk=self.get_transaction_id())
+        pc.create_cluster(**self.default_data)
+        transaction_id = pc.transaction_id
+
+        url = self.status_change_url
+        url += '?' + urlencode({'merchant_transaction_id': transaction_id})
+
+        response = self.client.get(url)
+        self.failUnlessEqual(response.status_code, 200)
+
+
+class OfflinePaymentTests(PaymentTestBase):
+    """ Tests not requiring payment credentials to be set. """
+
     def test_status_fail(self):
-        """ Test whether status_change requests are handled not well."""
+        """ Test whether status_change requests are handled well."""
 
         url = self.status_change_url
 
@@ -170,6 +169,8 @@ class OfflinePaymentTests(PaymentTestBase):
         self.failUnlessEqual(response.status_code, 404)
 
     def test_transaction_id(self):
+        """ Test transaction_id -> pk resolution. """
+
         pc = PaymentCluster(pk=self.get_transaction_id())
         pc.save()
 
