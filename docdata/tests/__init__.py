@@ -212,4 +212,12 @@ class OfflinePaymentTests(PaymentTestBase):
                 )
             )
 
-            print result
+            self.assertEquals(result, {
+                'meta_considered_safe': 'false',
+                'meta_charged_back': 'N',
+                'meta_amount_received': 'none',
+                'payment_cluster_process': 'started',
+                'last_partial_payment_process': 'new',
+                'payout_process': 'new',
+                'last_partial_payment_method': 'acceptgironew-nl-nlg'
+            })

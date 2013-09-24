@@ -162,17 +162,28 @@ class PaymentInterface(object):
             # Check for errors
             self._check_errors(resultdom)
 
+            # <status> nodes
+            status_nodes = resultdom.getElementsByTagName('status')
+
+            # Assert there's only exactly one
+            assert len(status_nodes) == 1
+
             data = {}
-            for e in resultdom.getElementsByTagName('status')[0].childNodes:
-                # Make sure we've got only one child
-                assert len(e.childNodes) == 1
+            for e in status_nodes[0].childNodes:
+                # Parse only tags (elements)
+                if e.nodeType == e.ELEMENT_NODE:
+                    # Nodes should only ever have one child
+                    assert len(e.childNodes) == 1
 
-                value = e.firstChild
+                    value = e.firstChild
 
-                # Make sure it's text
-                assert value.nodeType == value.TEXT_NODE
+                    # Make sure it's text
+                    assert value.nodeType == value.TEXT_NODE
 
-                data[e.tagName] = value.wholeText
+                    # If the property's already there, that's bad.
+                    assert not e.tagName in data
+
+                    data[e.tagName] = value.wholeText
 
             # Make sure we're actually returning something
             assert data
