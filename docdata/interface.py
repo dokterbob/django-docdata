@@ -117,11 +117,13 @@ class PaymentInterface(object):
 
         # Save some typing
         report_type = kwargs['report_type']
-        assert report_type in ('txt_simple',
-                               'txt_simple2',
-                               'xml_std',
-                               'xml_ext',
-                               'xml_all')
+        assert report_type in (
+            'txt_simple',
+            'txt_simple2',
+            'xml_std',
+            'xml_ext',
+            'xml_all'
+        )
 
         result = requests.get(self.url, params=kwargs, verify=True)
 
