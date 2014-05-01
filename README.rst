@@ -5,9 +5,6 @@ django-docdata
 .. image:: https://secure.travis-ci.org/dokterbob/django-docdata.png?branch=master
     :target: http://travis-ci.org/dokterbob/django-docdata
 
-.. image:: https://coveralls.io/repos/dokterbob/django-docdata/badge.png
-    :target: https://coveralls.io/r/dokterbob/django-docdata
-
 .. image:: https://landscape.io/github/dokterbob/django-docdata/master/landscape.png
    :target: https://landscape.io/github/dokterbob/django-docdata/master
    :alt: Code Health
