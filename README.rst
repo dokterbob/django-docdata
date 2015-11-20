@@ -12,11 +12,7 @@ django-docdata
 .. image:: https://badge.fury.io/py/django-docdata.png
     :target: http://badge.fury.io/py/django-docdata
 
-.. image:: https://pypip.in/d/django-docdata/badge.png
-    :target: https://crate.io/packages/django-docdata?version=latest
-
 Python/Django client to the Docdata payment system.
----------------------------------------------------
 
 What it does
 ============
@@ -27,10 +23,13 @@ encoding of URL's. On top of this we implemented a Django persistence layer
 and a `payment_status_changed` signal for easy integration into webshops and
 other applications requiring payments.
 
+Supported versions
+==================
+This package officially supports Python 2.7 and Django 1.7 and 1.8.
+
 Who uses this
 =============
-The `1%CLUB <https://onepercentclub.com/>`_ is using this in their Open Source crowdfunding platform `Project Bluebottle <https://github.com/onepercentclub/bluebottle>`_. Some version of this software has been included in `pcommerce.payment.docdata <https://pypi.python.org/pypi/pcommerce.payment.docdata/>`_ by Huub Bouma. And
-surely, we are using this package in-house over at `Visualspace <http://www.visualspace.nl/>`_ as well, ona fairly large production webshop.
+We are using this package in-house over at `Visualspace <http://www.visualspace.nl/>`_, on a fairly large production webshop. Some version of this software has been included in `pcommerce.payment.docdata <https://pypi.python.org/pypi/pcommerce.payment.docdata/>`_ by Huub Bouma.
 
 Tests
 =================
