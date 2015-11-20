@@ -8,6 +8,11 @@ env:
   - DJANGO=Django<1.9
   - DJANGO=Django==1.9rc1
 
+matrix:
+  allow_failures:
+    # Allow failures for unreleased Django version
+    - env: DJANGO=Django==1.9rc1
+
 # command to install dependencies
 install:
   - pip install -q $DJANGO --use-mirrors
