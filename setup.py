@@ -17,6 +17,12 @@ try:
 except:
     LICENSE = None
 
+try:
+    TEST_REQUIREMENTS = open('requirements_test.txt').read()
+except:
+    TEST_REQUIREMENTS = None
+
+
 setup(
     name='django-docdata',
     version='0.2',
@@ -39,9 +45,6 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Environment :: Web Environment',
     ],
-    test_suite='setuptest.setuptest.SetupTestSuite',
-    tests_require=(
-        'django-setuptest',
-        'argparse',  # apparently needed by django-setuptest on python 2.6
-    ),
+    test_suite='runtests.runtests',
+    tests_require=TEST_REQUIREMENTS
 )
