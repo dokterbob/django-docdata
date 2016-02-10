@@ -1,3 +1,6 @@
+import warnings
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -56,8 +59,7 @@ try:
     DOCDATA_ONLINE_TESTS = True
 
 except ImportError, e:
-    print 'Warning:', e
-    print (
+    warnings.warn(
         'DOCDATA_MERCHANT_NAME and DOCDATA_MERCHANT_PASSWORD '
         'are not set in test_settings.py. Online tests will be skipped.'
     )
