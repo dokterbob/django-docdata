@@ -25,7 +25,7 @@ other applications requiring payments.
 
 Supported versions
 ==================
-This package officially supports Python 2.7 and Django 1.7 and 1.8.
+This package officially supports Python 2.7 and Django 1.8 and 1.9, pull requests for Python 3 are encouraged.
 
 Who uses this
 =============
