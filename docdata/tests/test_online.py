@@ -1,7 +1,7 @@
 from urllib import urlencode
 
+from unittest import skipUnless
 from django.conf import settings
-from django.utils.unittest.case import skipUnless
 
 from docdata.models import PaymentCluster
 from docdata.exceptions import PaymentException

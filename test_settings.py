@@ -66,3 +66,10 @@ except ImportError, e:
     DOCDATA_MERCHANT_NAME = 'bogus_merchant'
     DOCDATA_MERCHANT_PASSWORD = 'bogus_pw'
     DOCDATA_ONLINE_TESTS = False
+
+# Random secret key
+import random
+key_chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
+SECRET_KEY = ''.join([
+    random.SystemRandom().choice(key_chars) for i in range(50)
+])
