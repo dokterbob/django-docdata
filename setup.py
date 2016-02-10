@@ -1,25 +1,31 @@
 #!/usr/bin/env python
 
+import warnings
+
 from setuptools import setup, find_packages
 
 try:
     README = open('README.rst').read()
 except:
+    warnings.warn('Could not read README.rst')
     README = None
 
 try:
     REQUIREMENTS = open('requirements.txt').read()
 except:
+    warnings.warn('Could not read requirements.txt')
     REQUIREMENTS = None
 
 try:
     LICENSE = open('LICENSE.txt').read()
 except:
+    warnings.warn('Could not read LICENSE.txt')
     LICENSE = None
 
 try:
     TEST_REQUIREMENTS = open('requirements_test.txt').read()
 except:
+    warnings.warn('Could not read requirements_test.txt')
     TEST_REQUIREMENTS = None
 
 
@@ -46,5 +52,5 @@ setup(
         'Environment :: Web Environment',
     ],
     test_suite='runtests.runtests',
-    tests_require=TEST_REQUIREMENTS
+    tests_require=('httmock==1.2.4')
 )
