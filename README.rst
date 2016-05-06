@@ -39,7 +39,7 @@ hence `DOCDATA_MERCHANT_NAME` and `DOCDATA_MERCHANT_PASSWORD` to be setup in
 the file `test_secrets.py` (see `test_secrets.example`). After that the tests
 can be run with::
 
-    python setup.py test
+    ./runtests.py
 
 Only the online tests are currently being run with Travis. If you fire pull
 requests I would tremendously appreciate offline test coverage
