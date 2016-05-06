@@ -45,6 +45,6 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Environment :: Web Environment',
     ],
-    test_suite='runtests.runtests',
+    test_suite='runtests.run_tests',
     tests_require=TEST_REQUIREMENTS
 )
