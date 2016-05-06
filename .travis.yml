@@ -25,9 +25,9 @@ matrix:
 install:
   # Latest PIP uses wheel by default
   - pip install --upgrade pip
-  - pip install -q $DJANGO --use-mirrors
-  - pip install -r requirements.txt --use-mirrors
-  - pip install -r requirements_test.txt --use-mirrors
+  - pip install -q $DJANGO
+  - pip install -r requirements.txt
+  - pip install -r requirements_test.txt
   - pip install coveralls
 
 # command to run tests
