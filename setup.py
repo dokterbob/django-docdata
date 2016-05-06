@@ -46,5 +46,5 @@ setup(
         'Environment :: Web Environment',
     ],
     test_suite='runtests.runtests',
-    tests_require=('httmock==1.2.4')
+    tests_require=TEST_REQUIREMENTS
 )
