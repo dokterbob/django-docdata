@@ -44,11 +44,11 @@ can be run with::
 
     ./runtests.py
 
-Only the online tests are currently being run with Travis. If you fire pull
-requests I would tremendously appreciate offline test coverage
-using `httpmock <https://pypi.python.org/pypi/httmock/>`_) over the existing
-offline tests, ideally based on the examples in Docdata's
-implementation manual.
+Coverage
+--------
+Only offline tests are currently being run with Travis. To run the online tests as well, Docdata credentials need to be configured in `test_project/test_project/test_secrets.py`.
+
+Pull requests for properly mocked online interactions based on the examples in Docdata's implementation manual are greatly appreciated.
 
 Settings
 ========
