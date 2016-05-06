@@ -25,7 +25,7 @@ except:
 
 setup(
     name='django-docdata',
-    version='1.0',
+    version='0.9',
     description='Python/Django client to the Docdata payment system.',
     long_description=README,
     install_requires=REQUIREMENTS,

@@ -1,7 +1,7 @@
 Changes
 =======
 
-1.0 (6-5-2016)
+0.9 (6-5-2016)
 --------------
 
 - Move tests to project root, use Django's native test runner.
