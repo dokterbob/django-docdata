@@ -46,7 +46,7 @@ can be run with::
 
 Coverage
 --------
-Only offline tests are currently being run with Travis. To run the online tests as well, Docdata credentials need to be configured in `test_project/test_project/test_secrets.py`.
+Only offline tests are currently being run with Travis, hence the actual coverage should be much higher. To run the online tests as well, Docdata credentials need to be configured in ``test_project/test_project/test_secrets.py``.
 
 Pull requests for properly mocked online interactions based on the examples in Docdata's implementation manual are greatly appreciated.
 
