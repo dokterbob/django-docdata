@@ -17,12 +17,6 @@ except:
     REQUIREMENTS = None
 
 try:
-    LICENSE = open('LICENSE.txt').read()
-except:
-    warnings.warn('Could not read LICENSE.txt')
-    LICENSE = None
-
-try:
     TEST_REQUIREMENTS = open('requirements_test.txt').read()
 except:
     warnings.warn('Could not read requirements_test.txt')
@@ -37,7 +31,7 @@ setup(
     install_requires=REQUIREMENTS,
     author='Mathijs de Bruin',
     author_email='mathijs@mathijsfietst.nl',
-    license=LICENSE,
+    license='AGPL',
     url='http://github.com/dokterbob/django-docdata/',
     packages=find_packages(),
     classifiers=[
