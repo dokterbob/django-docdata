@@ -1,16 +1,19 @@
-==============
+##############
 django-docdata
-==============
+##############
 
-.. image:: https://secure.travis-ci.org/dokterbob/django-docdata.png?branch=master
+.. image:: https://img.shields.io/pypi/v/django-docdata.svg
+    :target: https://pypi.python.org/pypi/django-docdata
+
+.. image:: https://img.shields.io/travis/dokterbob/django-docdata/master.svg
     :target: http://travis-ci.org/dokterbob/django-docdata
 
-.. image:: https://landscape.io/github/dokterbob/django-docdata/master/landscape.png
+.. image:: https://coveralls.io/repos/dokterbob/django-docdata/badge.svg?branch=master&service=github
+    :target: https://coveralls.io/github/dokterbob/django-docdata?branch=master
+
+.. image:: https://landscape.io/github/dokterbob/django-docdata/master/landscape.svg?style=flat
    :target: https://landscape.io/github/dokterbob/django-docdata/master
    :alt: Code Health
-
-.. image:: https://badge.fury.io/py/django-docdata.png
-    :target: http://badge.fury.io/py/django-docdata
 
 Python/Django client to the Docdata payment system.
 

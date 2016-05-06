@@ -1,5 +1,7 @@
 language: python
 
+sudo: false
+
 python:
   - 2.7
   - 3.4
@@ -9,6 +11,10 @@ env:
   - DJANGO=Django<1.9
   - DJANGO=Django<1.10
 
+cache:
+  directories:
+    - $HOME/.cache/pip
+
 matrix:
   allow_failures:
     # Allow failures for unreleased Django version
@@ -17,9 +23,15 @@ matrix:
 
 # command to install dependencies
 install:
+  # Latest PIP uses wheel by default
+  - pip install --upgrade pip
   - pip install -q $DJANGO --use-mirrors
   - pip install -r requirements.txt --use-mirrors
   - pip install -r requirements_test.txt --use-mirrors
+  - pip install coveralls
 
 # command to run tests
-script: python runtests.py
+script: coverage run runtests.py
+
+after_success:
+  coveralls
