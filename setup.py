@@ -33,7 +33,7 @@ setup(
     author_email='mathijs@mathijsfietst.nl',
     license='AGPL',
     url='http://github.com/dokterbob/django-docdata/',
-    packages=find_packages(),
+    packages=find_packages(exclude=("tests", "test_project")),
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
